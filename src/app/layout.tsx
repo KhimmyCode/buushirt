@@ -11,8 +11,8 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: "BUUShirt | ร้านสั่งทำเสื้อยืดตามใจคุณ - บริการออกแบบและสั่งสกรีนเสื้อยืดออนไลน์",
-  description: "ระบบสั่งทำเสื้อยืดตามสั่ง BUUShirt เลือกแบบ ขนาดเสื้อ และข้อความสกรีนหน้า-หลังได้ตามใจชอบ พร้อมคำนวณราคาส่วนลดปริมาณมาก (Bulk Tier Pricing) และชำระเงินสะดวกผ่าน PromptPay",
+  title: "Buucuties.jersey | Pre-order 1st",
+  description: "Buucuties.jersey Payment ",
 };
 
 export default function RootLayout({

@@ -369,24 +369,90 @@ export async function updateOrderStatus(
 }
 
 /**
- * Soft-delete an order (only marks as deleted locally — Google Sheets is NOT modified)
+ * Soft-delete an order (marks as 'ถูกลบ' in Google Sheets, or local fallback)
  */
-export function deleteOrder(orderId: string): void {
+export async function deleteOrder(orderId: string): Promise<void> {
+  if (isSheetsConfigured()) {
+    try {
+      const sheets = getSheetsClient();
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID!;
+
+      // Find row index by OrderID
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Orders!A:A',
+      });
+      const rows = response.data.values || [];
+      let targetRowIndex = -1;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i][0] === orderId) {
+          targetRowIndex = i + 1; // 1-indexed
+          break;
+        }
+      }
+
+      if (targetRowIndex !== -1) {
+        // Update column J (Status = col 10) to "ถูกลบ"
+        await sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Orders!J${targetRowIndex}`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [['ถูกลบ']],
+          },
+        });
+        return;
+      }
+    } catch (error) {
+      console.error('Error soft-deleting order in Google Sheets:', error);
+    }
+  }
+
+  // Local fallback
   ensureLocalDb();
   const dbData = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf-8'));
-  if (!dbData.deletedOrderIds.includes(orderId)) {
-    dbData.deletedOrderIds.push(orderId);
+  const orderIndex = dbData.orders.findIndex((o: OrderRow) => o.OrderID === orderId);
+  if (orderIndex !== -1) {
+    dbData.orders[orderIndex].Status = 'ถูกลบ';
     fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(dbData, null, 2), 'utf-8');
   }
 }
 
 /**
- * Get the list of soft-deleted order IDs
+ * Get the list of soft-deleted order IDs (queries orders with status 'ถูกลบ')
  */
-export function getDeletedOrderIds(): string[] {
+export async function getDeletedOrderIds(): Promise<string[]> {
+  if (isSheetsConfigured()) {
+    try {
+      const sheets = getSheetsClient();
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID!;
+
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Orders!A:J',
+      });
+      const rows = response.data.values || [];
+      if (rows.length <= 1) return [];
+
+      const deletedIds: string[] = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row[9] === 'ถูกลบ') {
+          deletedIds.push(row[0]);
+        }
+      }
+      return deletedIds;
+    } catch (error) {
+      console.error('Error fetching deleted order IDs from Google Sheets:', error);
+    }
+  }
+
   ensureLocalDb();
   const dbData = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf-8'));
-  return dbData.deletedOrderIds || [];
+  const localDeleted = dbData.orders
+    .filter((o: OrderRow) => o.Status === 'ถูกลบ')
+    .map((o: OrderRow) => o.OrderID);
+  return Array.from(new Set([...(dbData.deletedOrderIds || []), ...localDeleted]));
 }
 
 /**
@@ -395,7 +461,7 @@ export function getDeletedOrderIds(): string[] {
 export async function getPromoCodeUsageCount(promoCode: string): Promise<number> {
   const lowercaseCode = promoCode.toLowerCase().trim();
   const allOrders = await getAllOrders();
-  const deletedIds = getDeletedOrderIds();
+  const deletedIds = await getDeletedOrderIds();
   const activeOrders = allOrders.filter(o => !deletedIds.includes(o.order.OrderID));
   return activeOrders.filter(o => (o.order.PromoCode || '').toLowerCase().trim() === lowercaseCode).length;
 }

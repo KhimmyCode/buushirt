@@ -23,7 +23,7 @@ export async function GET() {
     // 2. Fetch history + deleted IDs in parallel
     const [history, deletedIds] = await Promise.all([
       getOrderHistory(sessionEmail),
-      Promise.resolve(getDeletedOrderIds()),
+      getDeletedOrderIds(),
     ]);
 
     // 3. Filter out soft-deleted orders (admin deleted — hidden from customer too)
