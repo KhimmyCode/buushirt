@@ -8,7 +8,7 @@ function isAdminAuthenticated(): boolean {
   const token = cookieStore.get('admin_session')?.value;
   if (!token) return false;
   const decoded = verifyToken(token);
-  return decoded && decoded.role === 'admin';
+  return decoded?.role === 'admin';
 }
 
 const VALID_STATUSES = ['รอตรวจสอบ', 'ตรวจสอบเสร็จสิ้น', 'กำลังผลิต', 'จัดส่งแล้ว'];

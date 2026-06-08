@@ -226,7 +226,7 @@ export async function getOrderHistory(email: string): Promise<{ order: OrderRow;
   // Local fallback
   ensureLocalDb();
   const dbData = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf-8'));
-  const filteredOrders = dbData.orders.filter((o: any) => o.Email.toLowerCase().trim() === lowercaseEmail);
+  const filteredOrders = dbData.orders.filter((o: OrderRow) => o.Email.toLowerCase().trim() === lowercaseEmail);
 
   return filteredOrders.map((order: OrderRow) => {
     const items = dbData.orderItems.filter((item: OrderItemRow) => item.OrderID === order.OrderID);

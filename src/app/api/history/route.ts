@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { getOrderHistory, getDeletedOrderIds } from '@/lib/sheets';
 import { verifyToken } from '@/lib/session';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // 1. Authenticate check via cookie

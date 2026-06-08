@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { User, Shirt, FileText, CreditCard, Check } from 'lucide-react';
+import { User, Shirt, FileText, CreditCard, Check, LucideIcon } from 'lucide-react';
 
 interface Step {
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
 }
 
 const STEPS: Step[] = [

@@ -14,10 +14,16 @@ export function signToken(payload: object): string {
   return `${data}.${signature}`;
 }
 
+export interface SessionPayload {
+  email?: string;
+  admin?: boolean;
+  role?: string;
+}
+
 /**
  * Verify HMAC signature and return the decoded payload or null
  */
-export function verifyToken(token: string): any | null {
+export function verifyToken(token: string): SessionPayload | null {
   if (!token) return null;
   const parts = token.split('.');
   if (parts.length !== 2) return null;

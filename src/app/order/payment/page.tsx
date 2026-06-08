@@ -89,9 +89,10 @@ export default function OrderPaymentPage() {
       setCreatedOrderId(data.orderId);
       setIsSuccess(true);
       clearWizard(); // Reset checkout wizard in context/localStorage
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError(err.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง');
+      const message = err instanceof Error ? err.message : 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง';
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
