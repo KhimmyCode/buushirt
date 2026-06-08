@@ -341,7 +341,7 @@ export default function HistoryPage() {
                 {/* Card Content (Visible when expanded) */}
                 <div
                   className={`transition-all duration-300 ease-in-out ${
-                    isExpanded ? 'max-h-[1600px] border-t border-slate-150/40 dark:border-slate-900' : 'max-h-0 pointer-events-none'
+                    isExpanded ? 'max-h-[1600px] border-t border-slate-200/40 dark:border-slate-900' : 'max-h-0 pointer-events-none'
                   } overflow-hidden`}
                 >
                   <div className="p-5 md:p-6 bg-slate-50/20 dark:bg-slate-950/20 space-y-6">

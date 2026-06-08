@@ -484,7 +484,7 @@ export default function AdminDashboard() {
             <Package className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="text-sm font-black text-white">BUUShirt Admin</h1>
+            <h1 className="text-sm font-black text-white">Buucuties.jersey Admin</h1>
             <p className="text-[10px] text-slate-500">จัดการคำสั่งซื้อ</p>
           </div>
         </div>

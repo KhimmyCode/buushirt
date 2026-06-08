@@ -186,68 +186,13 @@ export default function OrderPaymentPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left: PromptPay QR Code Mockup */}
         <div className="flex flex-col items-center">
-          <div className="w-full max-w-[320px] bg-gradient-to-b from-[#00377e] to-[#001d4a] text-white rounded-3xl overflow-hidden shadow-2xl border border-blue-900/50">
-            {/* Header branding */}
-            <div className="p-4 text-center border-b border-[#002f6c]/60 space-y-1">
-              <span className="text-[9px] tracking-widest text-[#00e5ff] font-black block">
-                THAI QR PAYMENT
-              </span>
-              {/* Logo block */}
-              <div className="flex items-center justify-center gap-1.5 py-0.5">
-                <span className="text-xs font-black bg-gradient-to-r from-blue-300 to-teal-300 bg-clip-text text-transparent">
-                  Prompt Pay
-                </span>
-              </div>
-            </div>
-
-            {/* QR box */}
-            <div className="p-6 bg-white flex flex-col items-center justify-center relative">
-              {/* Mock QR SVG */}
-              <svg className="w-44 h-44 text-slate-900" viewBox="0 0 100 100">
-                <rect x="5" y="5" width="25" height="25" fill="currentColor" rx="2" />
-                <rect x="9" y="9" width="17" height="17" fill="white" />
-                <rect x="13" y="13" width="9" height="9" fill="currentColor" />
-
-                <rect x="70" y="5" width="25" height="25" fill="currentColor" rx="2" />
-                <rect x="74" y="9" width="17" height="17" fill="white" />
-                <rect x="78" y="13" width="9" height="9" fill="currentColor" />
-
-                <rect x="5" y="70" width="25" height="25" fill="currentColor" rx="2" />
-                <rect x="9" y="74" width="17" height="17" fill="white" />
-                <rect x="13" y="78" width="9" height="9" fill="currentColor" />
-
-                {/* Random blocks */}
-                <rect x="35" y="5" width="8" height="8" fill="currentColor" />
-                <rect x="48" y="5" width="16" height="5" fill="currentColor" />
-                <rect x="35" y="18" width="16" height="12" fill="currentColor" />
-                <rect x="58" y="15" width="6" height="15" fill="currentColor" />
-
-                <rect x="5" y="35" width="12" height="12" fill="currentColor" />
-                <rect x="22" y="35" width="8" height="22" fill="currentColor" />
-                <rect x="5" y="53" width="12" height="12" fill="currentColor" />
-
-                <rect x="35" y="35" width="28" height="8" fill="currentColor" />
-                <rect x="70" y="35" width="12" height="16" fill="currentColor" />
-                <rect x="88" y="35" width="7" height="8" fill="currentColor" />
-
-                <rect x="35" y="48" width="10" height="20" fill="currentColor" />
-                <rect x="50" y="48" width="14" height="14" fill="currentColor" />
-                <rect x="70" y="56" width="25" height="8" fill="currentColor" />
-
-                <rect x="35" y="73" width="20" height="22" fill="currentColor" />
-                <rect x="60" y="70" width="8" height="25" fill="currentColor" />
-                <rect x="73" y="70" width="22" height="8" fill="currentColor" />
-                <rect x="73" y="83" width="12" height="12" fill="currentColor" />
-                <rect x="90" y="83" width="5" height="12" fill="currentColor" />
-
-                {/* Center mini-icon */}
-                <rect x="42" y="42" width="16" height="16" fill="white" rx="2" />
-                <circle cx="50" cy="50" r="5" fill="#002f6c" />
-              </svg>
-
-              <span className="text-[9px] text-slate-400 mt-3 font-bold">BUUShirt Shop (089-XXX-XXXX)</span>
-            </div>
-
+          <div className="w-full max-w-[320px] bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/Payment.jpeg"
+              alt="Scan to Pay"
+              className="w-full h-auto object-contain"
+            />
             {/* QR Footer showing exact amount */}
             <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-center">
               <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">ยอดโอนเงิน</span>

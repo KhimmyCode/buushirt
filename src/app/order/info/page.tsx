@@ -98,7 +98,7 @@ export default function OrderInfoPage() {
             placeholder="เช่น นายรักเรียน ดีเลิศ"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-slate-150 ${
+            className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-white ${
               errors.name
                 ? 'border-rose-500 focus:ring-rose-100 dark:focus:ring-rose-950/20 text-rose-600'
                 : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100 dark:border-slate-800 dark:focus:ring-blue-950/30'
@@ -124,7 +124,7 @@ export default function OrderInfoPage() {
             placeholder="บ้านเลขที่, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-slate-150 ${
+            className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-white ${
               errors.address
                 ? 'border-rose-500 focus:ring-rose-100 dark:focus:ring-rose-950/20 text-rose-600'
                 : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100 dark:border-slate-800 dark:focus:ring-blue-950/30'
@@ -152,7 +152,7 @@ export default function OrderInfoPage() {
               placeholder="เช่น 0891234567"
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-              className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-slate-150 ${
+              className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-950/40 text-sm focus:outline-none focus:ring-4 transition-all text-slate-800 dark:text-white ${
                 errors.phone
                   ? 'border-rose-500 focus:ring-rose-100 dark:focus:ring-rose-950/20 text-rose-600'
                   : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100 dark:border-slate-800 dark:focus:ring-blue-950/30'

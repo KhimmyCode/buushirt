@@ -96,7 +96,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-slate-100 dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-850 py-8 px-4 mt-auto">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center">
-          <p>© 2026 BUUShirt. All Rights Reserved. ระบบสั่งผลิตเสื้อยืดออนไลน์สัญชาติไทย</p>
+          <p>© 2026 Buucuties.jersey. All Rights Reserved. ระบบสั่งผลิตเสื้อยืดออนไลน์สัญชาติไทย</p>
           <div className="flex gap-4 font-bold">
             <Link href="/manual" className="hover:text-blue-600 transition-colors">คู่มือการใช้งาน</Link>
             <Link href="/history" className="hover:text-blue-600 transition-colors">ตรวจสอบประวัติ</Link>

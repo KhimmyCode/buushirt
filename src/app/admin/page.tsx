@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
               <ShieldCheck className="w-8 h-8 text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight">BUUShirt Admin</h1>
+              <h1 className="text-xl font-black text-white tracking-tight">Buucuties.jersey Admin</h1>
               <p className="text-xs text-slate-400 mt-1">กรุณาใส่รหัสผ่านเพื่อเข้าสู่หลังบ้าน</p>
             </div>
           </div>

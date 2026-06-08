@@ -41,11 +41,20 @@ export const Navbar: React.FC = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center gap-2 group">
-                <div className="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-xl group-hover:rotate-6 group-hover:scale-110 transition-all duration-300 shadow-md shadow-blue-500/20">
-                  <Shirt className="h-5 w-5" />
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logowhite.png"
+                  alt="Logo Light"
+                  className="h-8 w-auto dark:hidden transition-transform duration-300 group-hover:scale-105"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logoblack.png"
+                  alt="Logo Dark"
+                  className="h-8 w-auto hidden dark:block transition-transform duration-300 group-hover:scale-105"
+                />
                 <span className="font-black text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-500 bg-clip-text text-transparent tracking-tight">
-                  BUUShirt
+                  Buucuties.jersey
                 </span>
               </Link>
             </div>
