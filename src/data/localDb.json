@@ -1,0 +1,81 @@
+{
+  "orders": [
+    {
+      "OrderID": "ORD-20260608-1426",
+      "Timestamp": "2026-06-08T00:14:32.745Z",
+      "Email": "kimmaphat@gmail.com",
+      "CustomerName": "kimmaphat",
+      "ShippingAddress": "88/205 nest",
+      "Phone": "0835535199",
+      "TotalItems": 1,
+      "TotalPrice": 399,
+      "SlipUrl": "https://buushirt-slips.s3.amazonaws.com/slips/ORD-20260608-1426.png",
+      "Status": "ตรวจสอบเสร็จสิ้น",
+      "TrackingNumber": ""
+    },
+    {
+      "OrderID": "ORD-20260608-9333",
+      "Timestamp": "2026-06-08T01:41:51.590Z",
+      "Email": "kimmaphat@gmail.com",
+      "CustomerName": "Kimmaphat",
+      "ShippingAddress": "88/205 the nest",
+      "Phone": "0835535199",
+      "TotalItems": 1,
+      "TotalPrice": 399,
+      "SlipUrl": "[SLIP_NOT_UPLOADED] ORD-20260608-9333",
+      "Status": "รอตรวจสอบ",
+      "TrackingNumber": ""
+    },
+    {
+      "OrderID": "ORD-20260608-5470",
+      "Timestamp": "2026-06-08T01:56:47.730Z",
+      "Email": "kimmaphat@gmail.com",
+      "CustomerName": "เต่างอย",
+      "ShippingAddress": "55/899",
+      "Phone": "0835535199",
+      "TotalItems": 1,
+      "TotalPrice": 399,
+      "SlipUrl": "[SLIP_NOT_UPLOADED] ORD-20260608-5470",
+      "Status": "รอตรวจสอบ",
+      "TrackingNumber": ""
+    }
+  ],
+  "orderItems": [
+    {
+      "OrderID": "ORD-20260608-1426",
+      "ItemIndex": 1,
+      "DesignName": "Calm Twilight",
+      "Size": "L",
+      "PrintName": "KIM",
+      "BackNumber": "10",
+      "CustomText": "Nope",
+      "ItemPrice": 359
+    },
+    {
+      "OrderID": "ORD-20260608-9333",
+      "ItemIndex": 1,
+      "DesignName": "Calm Twilight",
+      "Size": "L",
+      "PrintName": "KHIM",
+      "BackNumber": "02",
+      "CustomText": "num2",
+      "ItemPrice": 359
+    },
+    {
+      "OrderID": "ORD-20260608-5470",
+      "ItemIndex": 1,
+      "DesignName": "Golden Shore",
+      "Size": "M",
+      "PrintName": "Tao",
+      "BackNumber": "03",
+      "CustomText": "x",
+      "ItemPrice": 359
+    }
+  ],
+  "deletedOrderIds": [
+    "ORD-20260608-1426",
+    "ORD-20260608-9333",
+    "ORD-20260608-1380",
+    "ORD-20260608-3367"
+  ]
+}
