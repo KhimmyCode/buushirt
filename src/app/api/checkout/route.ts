@@ -7,7 +7,7 @@ import { put } from '@vercel/blob';
 import { google } from 'googleapis';
 import { verifyToken } from '@/lib/session';
 import { saveOrder, OrderRow, OrderItemRow, validateRedeemCode, markRedeemCodeAsUsed } from '@/lib/sheets';
-import { SHIRT_DESIGNS } from '@/lib/designs';
+import { SHIRT_DESIGNS, SHIRT_SIZES } from '@/lib/designs';
 
 // Upload slip image (base64) to Google Drive, return public view URL
 async function uploadSlipToDrive(
@@ -176,7 +176,8 @@ export async function POST(request: Request) {
       if (!item.designId || typeof item.designId !== 'string') {
         return NextResponse.json({ error: 'แบบเสื้อไม่ถูกต้อง' }, { status: 400 });
       }
-      if (!item.size || typeof item.size !== 'string' || !['S', 'M', 'L', 'XL', '2XL', '3XL'].includes(item.size)) {
+      const validSizes = SHIRT_SIZES.map(s => s.value);
+      if (!item.size || typeof item.size !== 'string' || !validSizes.includes(item.size)) {
         return NextResponse.json({ error: 'ไซส์เสื้อไม่ถูกต้อง' }, { status: 400 });
       }
       if (item.printName && (typeof item.printName !== 'string' || item.printName.length > 30)) {
