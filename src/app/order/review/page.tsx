@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useOrder } from '@/context/OrderContext';
-import { SHIRT_DESIGNS } from '@/lib/designs';
+import { SHIRT_DESIGNS, SHIRT_SIZES } from '@/lib/designs';
 import { ArrowLeft, ArrowRight, User, MapPin, Phone, CheckCircle, Info } from 'lucide-react';
 
 export default function OrderReviewPage() {
@@ -123,7 +123,8 @@ export default function OrderReviewPage() {
                     const design = SHIRT_DESIGNS.find((d) => d.id === item.designId);
                     const designName = design ? design.name.split(' (')[0] : item.designId;
                     const itemPrice = summary.itemPrices[idx];
-                    const sizeExtra = item.size === '2XL' ? 10 : item.size === '3XL' ? 20 : 0;
+                    const sizeObj = SHIRT_SIZES.find((s) => s.value === item.size);
+                    const sizeExtra = sizeObj ? sizeObj.extraCharge : 0;
 
                     return (
                       <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
@@ -167,7 +168,8 @@ export default function OrderReviewPage() {
               const design = SHIRT_DESIGNS.find((d) => d.id === item.designId);
               const designName = design ? design.name.split(' (')[0] : item.designId;
               const itemPrice = summary.itemPrices[idx];
-              const sizeExtra = item.size === '2XL' ? 10 : item.size === '3XL' ? 20 : 0;
+              const sizeObj = SHIRT_SIZES.find((s) => s.value === item.size);
+              const sizeExtra = sizeObj ? sizeObj.extraCharge : 0;
 
               return (
                 <div key={idx} className="bg-white dark:bg-slate-950 border border-slate-200/50 dark:border-slate-850 rounded-2xl p-4 space-y-3 shadow-sm">

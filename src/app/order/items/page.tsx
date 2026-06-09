@@ -279,7 +279,7 @@ export default function OrderItemsPage() {
                   </span>
                 ) : (
                   <span className="text-[9px] text-slate-400 font-bold">
-                    (+ส่ง 50 บ.)
+                    (+ส่ง {summary.shippingFee} บ.)
                   </span>
                 )}
               </div>

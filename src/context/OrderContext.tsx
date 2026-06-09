@@ -133,6 +133,26 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [shirtItems, isMounted]);
 
+  // Keep shirtItems length in sync with customerInfo.shirtCount (self-healing state sync)
+  useEffect(() => {
+    if (!isMounted) return;
+    const count = customerInfo.shirtCount;
+    if (shirtItems.length !== count) {
+      setShirtItems((prevItems) => {
+        if (prevItems.length === count) return prevItems;
+        if (prevItems.length < count) {
+          const newItems = [...prevItems];
+          while (newItems.length < count) {
+            newItems.push(initialShirtItem());
+          }
+          return newItems;
+        } else {
+          return prevItems.slice(0, count);
+        }
+      });
+    }
+  }, [customerInfo.shirtCount, isMounted, shirtItems.length]);
+
   useEffect(() => {
     if (!isMounted) return;
     try {
