@@ -20,6 +20,11 @@ export default function OrderPaymentPage() {
   // Success states
   const [isSuccess, setIsSuccess] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState('');
+  const [receiptInfo, setReceiptInfo] = useState<{
+    name: string;
+    shirtCount: number;
+    grandTotal: number;
+  } | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,6 +91,11 @@ export default function OrderPaymentPage() {
       }
 
       // Success
+      setReceiptInfo({
+        name: customerInfo.name,
+        shirtCount: customerInfo.shirtCount,
+        grandTotal: summary.grandTotal,
+      });
       setCreatedOrderId(data.orderId);
       setIsSuccess(true);
       clearWizard(); // Reset checkout wizard in context/localStorage
@@ -129,19 +139,19 @@ export default function OrderPaymentPage() {
           <div className="space-y-2.5 text-xs">
             <div className="flex justify-between items-center">
               <span className="text-slate-500">ผู้รับพัสดุ</span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">{customerInfo.name}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{receiptInfo?.name || '-'}</span>
             </div>
 
             <div className="flex justify-between items-center">
               <span className="text-slate-500">จำนวนสั่งผลิต</span>
-              <span className="font-bold text-slate-800 dark:text-slate-200">{customerInfo.shirtCount} ตัว</span>
+              <span className="font-bold text-slate-800 dark:text-slate-200">{receiptInfo?.shirtCount || 0} ตัว</span>
             </div>
           </div>
 
           <div className="flex justify-between items-center border-t border-dashed border-slate-200 dark:border-slate-800 pt-3">
             <span className="text-sm font-black text-slate-800 dark:text-slate-200">ยอดชำระสุทธิ</span>
             <span className="text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-650 bg-clip-text text-transparent">
-              {summary.grandTotal.toLocaleString()} บาท
+              {(receiptInfo?.grandTotal || 0).toLocaleString()} บาท
             </span>
           </div>
         </div>

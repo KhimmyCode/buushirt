@@ -191,11 +191,16 @@ export async function POST(request: Request) {
       }
     }
 
-    // 3. Generate unique Order ID: ORD-YYYYMMDD-XXXX
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
+    // 3. Generate unique Order ID in Thailand Time (Asia/Bangkok)
+    const tzDateParts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Bangkok',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date()).split('-');
+    const yyyy = tzDateParts[0];
+    const mm = tzDateParts[1];
+    const dd = tzDateParts[2];
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderId = `ORD-${yyyy}${mm}${dd}-${randomSuffix}`;
 
@@ -267,9 +272,20 @@ export async function POST(request: Request) {
     // 5. Upload slip
     const slipUrl = await uploadSlip(slipBase64, orderId);
 
+    const thTimestamp = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Asia/Bangkok',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).format(new Date()).replace(' ', 'T') + '+07:00';
+
     const orderRow: OrderRow = {
       OrderID: orderId,
-      Timestamp: now.toISOString(),
+      Timestamp: thTimestamp,
       Email: sessionEmail,
       CustomerName: name.trim(),
       ShippingAddress: address.trim(),
