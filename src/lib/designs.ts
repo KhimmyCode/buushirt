@@ -37,4 +37,6 @@ export const SHIRT_SIZES = [
   { value: "XL", label: "XL (รอบอก 42\")", extraCharge: 0 },
   { value: "2XL", label: "2XL (รอบอก 44\")", extraCharge: 10 },
   { value: "3XL", label: "3XL (รอบอก 46\")", extraCharge: 20 },
+  { value: "4XL", label: "4XL (รอบอก 48\")", extraCharge: 30 },
+  { value: "5XL", label: "5XL (รอบอก 50\")", extraCharge: 40 },
 ];

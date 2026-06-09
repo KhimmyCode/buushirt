@@ -312,7 +312,7 @@ export default function OrderReviewPage() {
             </div>
             {summary.sizeSurchargesTotal > 0 && (
               <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-450 dark:text-slate-400">บวกเพิ่มไซส์พิเศษ (2XL/3XL)</span>
+                <span className="text-slate-450 dark:text-slate-400">บวกเพิ่มไซส์พิเศษ (2XL ขึ้นไป)</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">
                   +{summary.sizeSurchargesTotal.toLocaleString()} บาท
                 </span>

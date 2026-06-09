@@ -6,7 +6,7 @@ import path from 'path';
 import { put } from '@vercel/blob';
 import { google } from 'googleapis';
 import { verifyToken } from '@/lib/session';
-import { saveOrder, OrderRow, OrderItemRow, getPromoCodeUsageCount } from '@/lib/sheets';
+import { saveOrder, OrderRow, OrderItemRow, validateRedeemCode, markRedeemCodeAsUsed } from '@/lib/sheets';
 import { SHIRT_DESIGNS } from '@/lib/designs';
 
 // Upload slip image (base64) to Google Drive, return public view URL
@@ -222,33 +222,16 @@ export async function POST(request: Request) {
     let validatedCode = '';
 
     if (promoCode) {
-      const code = promoCode.toUpperCase().trim();
-      if (code === 'BUUFREE') {
-        if (qty >= 5) {
-          const usage = await getPromoCodeUsageCount('BUUFREE');
-          if (usage < 20) {
-            finalShippingFee = 0;
-            validatedCode = 'BUUFREE';
-          } else {
-            return NextResponse.json({ error: 'โค้ด BUUFREE สิทธิ์เต็มแล้ว' }, { status: 400 });
-          }
-        } else {
-          return NextResponse.json({ error: 'โค้ด BUUFREE ต้องสั่งซื้อ 5 ตัวขึ้นไป' }, { status: 400 });
-        }
-      } else if (code === 'BUUCUTIES299') {
-        if (qty >= 20) {
-          const usage = await getPromoCodeUsageCount('BUUCUTIES299');
-          if (usage < 5) {
-            finalBasePrice = 299;
-            validatedCode = 'BUUCUTIES299';
-          } else {
-            return NextResponse.json({ error: 'โค้ด BUUCUTIES299 สิทธิ์เต็มแล้ว' }, { status: 400 });
-          }
-        } else {
-          return NextResponse.json({ error: 'โค้ด BUUCUTIES299 ต้องสั่งซื้อ 20 ตัวขึ้นไป' }, { status: 400 });
-        }
-      } else {
-        return NextResponse.json({ error: 'โค้ดส่วนลดไม่ถูกต้อง' }, { status: 400 });
+      const promoResult = await validateRedeemCode(promoCode, qty);
+      if (!promoResult.valid) {
+        return NextResponse.json({ error: promoResult.error || 'โค้ดส่วนลดไม่ถูกต้อง' }, { status: 400 });
+      }
+
+      validatedCode = promoCode.toUpperCase().trim();
+      if (promoResult.type === 'free_shipping') {
+        finalShippingFee = 0;
+      } else if (promoResult.type === 'price_discount') {
+        finalBasePrice = 299;
       }
     }
 
@@ -298,6 +281,10 @@ export async function POST(request: Request) {
 
     // 6. Save to DB (Google Sheets or Local fallback)
     await saveOrder(orderRow, itemsRows);
+
+    if (validatedCode) {
+      await markRedeemCodeAsUsed(validatedCode);
+    }
 
     return NextResponse.json({
       success: true,

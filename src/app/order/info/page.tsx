@@ -201,6 +201,7 @@ export default function OrderInfoPage() {
               {[
                 { value: 1, label: '1 ตัว (359 บ.)' },
                 { value: 3, label: '3 ตัว ⚡ ตัวละ 349 บ.' },
+                { value: 5, label: '5 ตัว 🚚 ตัวละ 339 บ.' },
                 { value: 10, label: '10 ตัว 👥 ตัวละ 329 บ.' },
                 { value: 20, label: '20 ตัว 🏷️ ตัวละ 319 บ.' },
               ].map((preset) => (
@@ -233,7 +234,7 @@ export default function OrderInfoPage() {
             <li>สั่งซื้อ 5-9 ตัว: ราคาตัวละ <strong className="text-slate-800 dark:text-slate-200">339 บาท</strong> (ค่าส่ง 60 บาท)</li>
             <li>สั่งซื้อ 10-19 ตัว: ราคาตัวละ <strong className="text-slate-800 dark:text-slate-200">329 บาท</strong> (ค่าส่ง 80 บาท)</li>
             <li>สั่งซื้อ 20 ตัวขึ้นไป: ราคาตัวละ <strong className="text-slate-800 dark:text-slate-200">319 บาท</strong> (ค่าส่ง 80 บาท)</li>
-            <li>ไซส์พิเศษ: 2XL +10 บาท/ตัว, 3XL +20 บาท/ตัว</li>
+            <li>ไซส์พิเศษ: 2XL +10 บาท/ตัว, 3XL +20 บาท/ตัว, 4XL +30 บาท/ตัว, 5XL +40 บาท/ตัว</li>
           </ul>
         </div>
 

@@ -465,3 +465,186 @@ export async function getPromoCodeUsageCount(promoCode: string): Promise<number>
   const activeOrders = allOrders.filter(o => !deletedIds.includes(o.order.OrderID));
   return activeOrders.filter(o => (o.order.PromoCode || '').toLowerCase().trim() === lowercaseCode).length;
 }
+
+export interface RedeemCodeResult {
+  valid: boolean;
+  type?: 'free_shipping' | 'price_discount';
+  error?: string;
+}
+
+/**
+ * Validate a promo code using the 'Redeem_Code' sheet
+ */
+export async function validateRedeemCode(promoCode: string, qty: number): Promise<RedeemCodeResult> {
+  const code = promoCode.toUpperCase().trim();
+
+  if (isSheetsConfigured()) {
+    try {
+      const sheets = getSheetsClient();
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID!;
+
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Redeem_Code!A:C',
+      });
+
+      const rows = response.data.values || [];
+      if (rows.length === 0) {
+        return { valid: false, error: 'โค้ดส่วนลดไม่ถูกต้อง' };
+      }
+
+      // Check if code exists and find first unused matching row
+      let codeExists = false;
+      let unusedRow = null;
+
+      for (let i = 0; i < rows.length; i++) {
+        const rowCode = rows[i][0]?.toUpperCase().trim();
+        const rowStatus = rows[i][1] || '';
+        if (rowCode === code) {
+          codeExists = true;
+          const isUsed = rowStatus === 'ใช้งานแล้ว' || rowStatus === 'Used' || rowStatus === 'used';
+          if (!isUsed) {
+            unusedRow = {
+              index: i + 1,
+              code: rows[i][0],
+              status: rowStatus,
+              type: rows[i][2] || '',
+            };
+            break;
+          }
+        }
+      }
+
+      if (!codeExists) {
+        return { valid: false, error: 'โค้ดส่วนลดไม่ถูกต้อง' };
+      }
+
+      if (!unusedRow) {
+        return { valid: false, error: 'โค้ดนี้ได้ใช้งานไปแล้ว' };
+      }
+
+      // Determine promo type
+      let promoType: 'free_shipping' | 'price_discount' = 'free_shipping';
+      const typeCol = unusedRow.type.toLowerCase().trim();
+      const codeLower = code.toLowerCase();
+      if (typeCol === 'price_discount' || typeCol === 'buucuties299' || codeLower.includes('299') || codeLower.includes('cuties')) {
+        promoType = 'price_discount';
+      }
+
+      // Validate quantity limits
+      if (promoType === 'free_shipping') {
+        if (qty < 5) {
+          return { valid: false, error: `โค้ด ${unusedRow.code} ใช้ได้เฉพาะเมื่อสั่งเสื้อ 5 ตัวขึ้นไป` };
+        }
+      } else if (promoType === 'price_discount') {
+        if (qty < 20) {
+          return { valid: false, error: `โค้ด ${unusedRow.code} ใช้ได้เฉพาะเมื่อสั่งเสื้อ 20 ตัวขึ้นไป` };
+        }
+      }
+
+      return { valid: true, type: promoType };
+    } catch (error) {
+      console.error('Error validating redeem code in Google Sheets:', error);
+    }
+  }
+
+  // Local fallback
+  ensureLocalDb();
+  const dbData = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf-8'));
+  if (!dbData.redeemCodes) {
+    dbData.redeemCodes = [
+      { code: 'BUUFREE', status: 'ยังไม่ได้ใช้', type: 'free_shipping' },
+      { code: 'BUUCUTIES299', status: 'ยังไม่ได้ใช้', type: 'price_discount' },
+    ];
+    fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(dbData, null, 2), 'utf-8');
+  }
+
+  interface LocalRedeemCode {
+    code: string;
+    status: string;
+    type: string;
+  }
+
+  const foundLocal = dbData.redeemCodes.find((rc: LocalRedeemCode) => rc.code.toUpperCase().trim() === code);
+  if (!foundLocal) {
+    return { valid: false, error: 'โค้ดส่วนลดไม่ถูกต้อง' };
+  }
+
+  if (foundLocal.status === 'ใช้งานแล้ว') {
+    return { valid: false, error: 'โค้ดนี้ได้ใช้งานไปแล้ว' };
+  }
+
+  const promoType: 'free_shipping' | 'price_discount' = foundLocal.type === 'price_discount' ? 'price_discount' : 'free_shipping';
+  if (promoType === 'free_shipping' && qty < 5) {
+    return { valid: false, error: `โค้ด ${foundLocal.code} ใช้ได้เฉพาะเมื่อสั่งเสื้อ 5 ตัวขึ้นไป` };
+  }
+  if (promoType === 'price_discount' && qty < 20) {
+    return { valid: false, error: `โค้ด ${foundLocal.code} ใช้ได้เฉพาะเมื่อสั่งเสื้อ 20 ตัวขึ้นไป` };
+  }
+
+  return { valid: true, type: promoType };
+}
+
+/**
+ * Mark a redeem code as 'ใช้งานแล้ว' in sheets or local DB
+ */
+export async function markRedeemCodeAsUsed(promoCode: string): Promise<void> {
+  const code = promoCode.toUpperCase().trim();
+
+  if (isSheetsConfigured()) {
+    try {
+      const sheets = getSheetsClient();
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID!;
+
+      const response = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Redeem_Code!A:B',
+      });
+
+      const rows = response.data.values || [];
+      let targetRowIndex = -1;
+      for (let i = 0; i < rows.length; i++) {
+        const rowCode = rows[i][0]?.toUpperCase().trim();
+        const rowStatus = rows[i][1] || '';
+        if (rowCode === code) {
+          const isUsed = rowStatus === 'ใช้งานแล้ว' || rowStatus === 'Used' || rowStatus === 'used';
+          if (!isUsed) {
+            targetRowIndex = i + 1; // 1-indexed
+            break;
+          }
+        }
+      }
+
+      if (targetRowIndex !== -1) {
+        // Update column B (Status = col 2) to "ใช้งานแล้ว"
+        await sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Redeem_Code!B${targetRowIndex}`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [['ใช้งานแล้ว']],
+          },
+        });
+        return;
+      }
+    } catch (error) {
+      console.error('Error marking redeem code as used in Google Sheets:', error);
+    }
+  }
+
+  // Local fallback
+  ensureLocalDb();
+  const dbData = JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf-8'));
+  if (dbData.redeemCodes) {
+    interface LocalRedeemCode {
+      code: string;
+      status: string;
+      type: string;
+    }
+    const index = dbData.redeemCodes.findIndex((rc: LocalRedeemCode) => rc.code.toUpperCase().trim() === code);
+    if (index !== -1) {
+      dbData.redeemCodes[index].status = 'ใช้งานแล้ว';
+      fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(dbData, null, 2), 'utf-8');
+    }
+  }
+}
