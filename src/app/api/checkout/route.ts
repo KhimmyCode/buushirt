@@ -240,6 +240,8 @@ export async function POST(request: Request) {
       let extra = 0;
       if (item.size === '2XL') extra = 10;
       else if (item.size === '3XL') extra = 20;
+      else if (item.size === '4XL') extra = 30;
+      else if (item.size === '5XL') extra = 40;
 
       sizeSurchargesTotal += extra;
       const itemPrice = finalBasePrice + extra;

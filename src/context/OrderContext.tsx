@@ -35,7 +35,8 @@ interface OrderContextProps {
   currentStep: string;
   isMounted: boolean;
   promoCode: string;
-  setPromoCode: (code: string) => void;
+  promoType: string;
+  setPromoCode: (code: string, type?: string) => void;
   login: (email: string) => void;
   logout: () => void;
   updateCustomerInfo: (info: Partial<CustomerInfo>) => void;
@@ -68,10 +69,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [shirtItems, setShirtItems] = useState<ShirtItem[]>([initialShirtItem()]);
   const [currentStep, setCurrentStep] = useState<string>('info');
   const [promoCode, setPromoCodeState] = useState<string>('');
+  const [promoType, setPromoTypeState] = useState<string>('');
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  const setPromoCode = (code: string) => {
+  const setPromoCode = (code: string, type: string = '') => {
     setPromoCodeState(code.toUpperCase().trim());
+    setPromoTypeState(type);
   };
 
   // Load from localStorage on mount
@@ -83,12 +86,14 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const savedItems = localStorage.getItem('buushirt_shirt_items');
         const savedStep = localStorage.getItem('buushirt_current_step');
         const savedPromo = localStorage.getItem('buushirt_promo_code');
+        const savedPromoType = localStorage.getItem('buushirt_promo_type');
 
         if (savedEmail) setUserEmail(savedEmail);
         if (savedInfo) setCustomerInfo(JSON.parse(savedInfo));
         if (savedItems) setShirtItems(JSON.parse(savedItems));
         if (savedStep) setCurrentStep(savedStep);
         if (savedPromo) setPromoCodeState(savedPromo);
+        if (savedPromoType) setPromoTypeState(savedPromoType);
       } catch (err) {
         console.error('Error loading order state from localStorage:', err);
       }
@@ -142,13 +147,15 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       if (promoCode) {
         localStorage.setItem('buushirt_promo_code', promoCode);
+        localStorage.setItem('buushirt_promo_type', promoType);
       } else {
         localStorage.removeItem('buushirt_promo_code');
+        localStorage.removeItem('buushirt_promo_type');
       }
     } catch (err) {
       console.error(err);
     }
-  }, [promoCode, isMounted]);
+  }, [promoCode, promoType, isMounted]);
 
   const login = (email: string) => {
     setUserEmail(email);
@@ -261,20 +268,27 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     // Apply promo codes if present
-    let promoType = '';
+    let appliedPromoType = '';
     const code = promoCode.toUpperCase().trim();
-    if (code === 'BUUFREE' && qty >= 5) {
-      shippingFee = 0;
-      promoType = 'free_shipping';
-    } else if (code === 'BUUCUTIES299' && qty >= 20) {
-      basePricePerUnit = 299;
-      promoType = 'price_discount';
+    if (code) {
+      const type = promoType || (
+        (code.includes('299') || code.includes('CUTIES')) ? 'price_discount' : 'free_shipping'
+      );
+      if (type === 'free_shipping' && qty >= 5) {
+        shippingFee = 0;
+        appliedPromoType = 'free_shipping';
+      } else if (type === 'price_discount' && qty >= 20) {
+        basePricePerUnit = 299;
+        appliedPromoType = 'price_discount';
+      }
     }
 
     // 2. Calculate individual sizes addition:
     // S, M, L, XL: 0
     // 2XL: +10 THB
     // 3XL: +20 THB
+    // 4XL: +30 THB
+    // 5XL: +40 THB
     let sizeSurchargesTotal = 0;
     const itemPrices: number[] = [];
 
@@ -282,6 +296,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       let extra = 0;
       if (item.size === '2XL') extra = 10;
       else if (item.size === '3XL') extra = 20;
+      else if (item.size === '4XL') extra = 30;
+      else if (item.size === '5XL') extra = 40;
 
       sizeSurchargesTotal += extra;
       itemPrices.push(basePricePerUnit + extra);
@@ -298,7 +314,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       grandTotal,
       itemPrices,
       promoCode,
-      promoType,
+      promoType: appliedPromoType,
     };
   };
 
@@ -311,6 +327,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         currentStep,
         isMounted,
         promoCode,
+        promoType,
         setPromoCode,
         login,
         logout,

@@ -527,8 +527,17 @@ export async function validateRedeemCode(promoCode: string, qty: number): Promis
       let promoType: 'free_shipping' | 'price_discount' = 'free_shipping';
       const typeCol = unusedRow.type.toLowerCase().trim();
       const codeLower = code.toLowerCase();
-      if (typeCol === 'price_discount' || typeCol === 'buucuties299' || codeLower.includes('299') || codeLower.includes('cuties')) {
+      if (typeCol === 'price_discount') {
         promoType = 'price_discount';
+      } else if (typeCol === 'free_shipping') {
+        promoType = 'free_shipping';
+      } else {
+        // Fallback pattern matching if sheet cell is empty
+        if (codeLower.includes('299') || codeLower.includes('cuties') || typeCol === 'buucuties299') {
+          promoType = 'price_discount';
+        } else {
+          promoType = 'free_shipping';
+        }
       }
 
       // Validate quantity limits
@@ -574,7 +583,20 @@ export async function validateRedeemCode(promoCode: string, qty: number): Promis
     return { valid: false, error: 'โค้ดนี้ได้ใช้งานไปแล้ว' };
   }
 
-  const promoType: 'free_shipping' | 'price_discount' = foundLocal.type === 'price_discount' ? 'price_discount' : 'free_shipping';
+  const typeCol = foundLocal.type.toLowerCase().trim();
+  const codeLower = code.toLowerCase();
+  let promoType: 'free_shipping' | 'price_discount' = 'free_shipping';
+  if (typeCol === 'price_discount') {
+    promoType = 'price_discount';
+  } else if (typeCol === 'free_shipping') {
+    promoType = 'free_shipping';
+  } else {
+    if (codeLower.includes('299') || codeLower.includes('cuties') || typeCol === 'buucuties299') {
+      promoType = 'price_discount';
+    } else {
+      promoType = 'free_shipping';
+    }
+  }
   if (promoType === 'free_shipping' && qty < 5) {
     return { valid: false, error: `โค้ด ${foundLocal.code} ใช้ได้เฉพาะเมื่อสั่งเสื้อ 5 ตัวขึ้นไป` };
   }

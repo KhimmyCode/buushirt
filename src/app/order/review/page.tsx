@@ -7,7 +7,7 @@ import { SHIRT_DESIGNS } from '@/lib/designs';
 import { ArrowLeft, ArrowRight, User, MapPin, Phone, CheckCircle, Info } from 'lucide-react';
 
 export default function OrderReviewPage() {
-  const { customerInfo, shirtItems, getSummary, setStep, promoCode, setPromoCode } = useOrder();
+  const { customerInfo, shirtItems, getSummary, setStep, promoCode, promoType, setPromoCode } = useOrder();
   const router = useRouter();
   const summary = getSummary();
 
@@ -28,7 +28,7 @@ export default function OrderReviewPage() {
       });
       const data = await res.json();
       if (res.ok && data.valid) {
-        setPromoCode(data.code);
+        setPromoCode(data.code, data.type);
         setCouponCode('');
       } else {
         setCouponError(data.error || 'ตรวจสอบโค้ดไม่สำเร็จ');
@@ -279,11 +279,19 @@ export default function OrderReviewPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-xs text-emerald-600 dark:text-emerald-400">
+                  <div className={`flex items-center justify-between border rounded-xl px-4 py-3 text-xs ${
+                    summary.promoType 
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+                      : 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400'
+                  }`}>
                     <div className="space-y-0.5">
-                      <p className="font-black">✓ ประยุกต์ใช้โค้ด {promoCode} สำเร็จ</p>
+                      <p className="font-black">
+                        {summary.promoType ? '✓' : '⚠️'} ประยุกต์ใช้โค้ด {promoCode} {summary.promoType ? 'สำเร็จ' : 'ยังไม่เข้าเงื่อนไข'}
+                      </p>
                       <p className="text-[10px] opacity-80 font-medium">
-                        {promoCode === 'BUUFREE' ? 'ได้รับสิทธิ์จัดส่งฟรีเรียบร้อย' : 'ปรับราคาเสื้อลงเหลือตัวละ 299 บาท'}
+                        {summary.promoType 
+                          ? (summary.promoType === 'free_shipping' ? 'ได้รับสิทธิ์จัดส่งฟรีเรียบร้อย' : 'ปรับราคาเสื้อลงเหลือตัวละ 299 บาท')
+                          : (promoType === 'free_shipping' ? 'โค้ดนี้ใช้ได้เฉพาะเมื่อสั่งซื้อ 5 ตัวขึ้นไป' : 'โค้ดนี้ใช้ได้เฉพาะเมื่อสั่งซื้อ 20 ตัวขึ้นไป')}
                       </p>
                     </div>
                     <button
