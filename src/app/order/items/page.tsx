@@ -217,11 +217,11 @@ export default function OrderItemsPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-black text-slate-655 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
                       <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                      ข้อมูลเพิ่มเติม (ชื่อรุ่น / ภาควิชา / คณะ)
+                      custom( ex. Faculty)
                     </label>
                     <input
                       type="text"
-                      placeholder="เช่น SE-12 หรือ คณะวิศวกรรมศาสตร์"
+                      placeholder="เช่น Engineering "
                       value={item.customText}
                       onChange={(e) => handleTextChange(idx, 'customText', e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-950/30 text-slate-800 dark:text-slate-100 transition-all"

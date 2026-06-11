@@ -26,6 +26,7 @@ export interface OrderItemRow {
   BackNumber: string;
   CustomText: string; // Custom Text Extra
   ItemPrice: number;
+  SlipUrl?: string;
 }
 
 const LOCAL_DB_PATH = path.join(process.cwd(), 'src/data/localDb.json');
@@ -107,7 +108,7 @@ export async function saveOrder(order: OrderRow, items: OrderItemRow[]): Promise
       });
 
       // 2. Append to OrderItems
-      // Schema: OrderID | ItemIndex | DesignName | Size | PrintName | BackNumber | CustomText | ItemPrice
+      // Schema: OrderID | ItemIndex | DesignName | Size | PrintName | BackNumber | CustomText | ItemPrice | SlipUrl
       const itemValues = items.map((item) => [
         item.OrderID,
         item.ItemIndex,
@@ -117,11 +118,12 @@ export async function saveOrder(order: OrderRow, items: OrderItemRow[]): Promise
         item.BackNumber,
         item.CustomText,
         item.ItemPrice,
+        item.SlipUrl || '',
       ]);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId,
-        range: 'OrderItems!A:H',
+        range: 'OrderItems!A:I',
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: itemValues,
@@ -188,7 +190,7 @@ export async function getOrderHistory(email: string): Promise<{ order: OrderRow;
       // Fetch OrderItems
       const itemsRes = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'OrderItems!A:H',
+        range: 'OrderItems!A:I',
       });
       const itemRows = itemsRes.data.values || [];
 
@@ -209,6 +211,7 @@ export async function getOrderHistory(email: string): Promise<{ order: OrderRow;
           BackNumber: row[5] || '',
           CustomText: row[6] || '',
           ItemPrice: parseFloat(row[7] || '0'),
+          SlipUrl: row[8] || '',
         });
       }
 
@@ -271,7 +274,7 @@ export async function getAllOrders(): Promise<{ order: OrderRow; items: OrderIte
 
       const itemsRes = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'OrderItems!A:H',
+        range: 'OrderItems!A:I',
       });
       const itemRows = itemsRes.data.values || [];
 
@@ -289,6 +292,7 @@ export async function getAllOrders(): Promise<{ order: OrderRow; items: OrderIte
           BackNumber: row[5] || '',
           CustomText: row[6] || '',
           ItemPrice: parseFloat(row[7] || '0'),
+          SlipUrl: row[8] || '',
         });
       }
 

@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import { Readable } from 'stream';
 import fs from 'fs';
 import path from 'path';
-import { put } from '@vercel/blob';
 import { google } from 'googleapis';
 import { verifyToken } from '@/lib/session';
 import { saveOrder, OrderRow, OrderItemRow, validateRedeemCode, markRedeemCodeAsUsed } from '@/lib/sheets';
@@ -72,30 +71,7 @@ async function uploadSlip(
   base64Data: string,
   orderId: string
 ): Promise<string> {
-  const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64, 'base64');
-
-  // Detect MIME type
-  const mimeType = base64Data.startsWith('data:image/png') ? 'image/png'
-    : base64Data.startsWith('data:image/jpg') || base64Data.startsWith('data:image/jpeg') ? 'image/jpeg'
-    : 'image/png';
-
-  // 1. Try Vercel Blob if token is configured
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    try {
-      console.log('Uploading slip to Vercel Blob...');
-      const blob = await put(`slips/slip-${orderId}.png`, buffer, {
-        access: 'public',
-        contentType: mimeType,
-      });
-      console.log('Successfully uploaded slip to Vercel Blob:', blob.url);
-      return blob.url;
-    } catch (blobError) {
-      console.error('Failed to upload slip to Vercel Blob, trying other methods:', blobError);
-    }
-  }
-
-  // 2. Try Google Drive upload
+  // 1. Try Google Drive upload directly (Vercel Blob disabled)
   try {
     console.log('Attempting Google Drive upload...');
     return await uploadSlipToDrive(base64Data, orderId);
@@ -111,6 +87,8 @@ async function uploadSlip(
 
       const filename = `slip-${orderId}.png`;
       const filepath = path.join(uploadsDir, filename);
+      const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
+      const buffer = Buffer.from(base64, 'base64');
       fs.writeFileSync(filepath, buffer);
 
       console.log(`Saved slip locally as fallback: ${filepath}`);
@@ -241,6 +219,9 @@ export async function POST(request: Request) {
       }
     }
 
+    // 5. Upload slip
+    const slipUrl = await uploadSlip(slipBase64, orderId);
+
     let sizeSurchargesTotal = 0;
     const itemsRows: OrderItemRow[] = shirtItems.map((item, idx) => {
       let extra = 0;
@@ -264,13 +245,11 @@ export async function POST(request: Request) {
         BackNumber: item.backNumber || '-',
         CustomText: item.customText || '-',
         ItemPrice: itemPrice,
+        SlipUrl: slipUrl,
       };
     });
 
     const totalPrice = (finalBasePrice * qty) + sizeSurchargesTotal + finalShippingFee;
-
-    // 5. Upload slip
-    const slipUrl = await uploadSlip(slipBase64, orderId);
 
     const thTimestamp = new Intl.DateTimeFormat('sv-SE', {
       timeZone: 'Asia/Bangkok',
