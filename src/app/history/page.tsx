@@ -380,7 +380,7 @@ export default function HistoryPage() {
                     {/* Shirts customizations table */}
                     <div className="space-y-2">
                       <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 pl-1">
-                        รายละเอียดเสื้อยืดสั่งผลิต ({item.order.TotalItems} ตัว)
+                        รายละเอียดเสื้อ Jersey สั่งผลิต ({item.order.TotalItems} ตัว)
                       </h4>
 
                       <div className="hidden md:block border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 text-xs">

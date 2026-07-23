@@ -37,7 +37,7 @@ export default function HomePage() {
               href={orderHref}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors"
             >
-              <span>เริ่มสั่งเสื้อยืด</span>
+              <span>เริ่มสั่ง Jersey</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
