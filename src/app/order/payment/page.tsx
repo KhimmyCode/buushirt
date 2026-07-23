@@ -30,7 +30,6 @@ export default function OrderPaymentPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size limit (e.g., 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setError('ขนาดไฟล์ต้องไม่เกิน 5MB');
       return;
@@ -39,11 +38,9 @@ export default function OrderPaymentPage() {
     setSlipFile(file);
     setError(null);
 
-    // Create local object URL for preview
     const objectUrl = URL.createObjectURL(file);
     setSlipPreview(objectUrl);
 
-    // Convert file to base64 for API transmission
     const reader = new FileReader();
     reader.onloadend = () => {
       if (typeof reader.result === 'string') {
@@ -90,7 +87,6 @@ export default function OrderPaymentPage() {
         throw new Error(data.error || 'เกิดข้อผิดพลาดในการทำรายการ');
       }
 
-      // Success
       setReceiptInfo({
         name: customerInfo.name,
         shirtCount: customerInfo.shirtCount,
@@ -98,7 +94,7 @@ export default function OrderPaymentPage() {
       });
       setCreatedOrderId(data.orderId);
       setIsSuccess(true);
-      clearWizard(); // Reset checkout wizard in context/localStorage
+      clearWizard();
     } catch (err) {
       console.error(err);
       const message = err instanceof Error ? err.message : 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง';
@@ -108,59 +104,54 @@ export default function OrderPaymentPage() {
     }
   };
 
-  // Render Success Screen (Digital Receipt Card Layout)
+  // Success screen
   if (isSuccess) {
     return (
-      <div className="text-center py-8 space-y-6">
-        <div className="mx-auto flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-450 rounded-full shadow-lg shadow-emerald-500/20 animate-bounce">
-          <Check className="w-8 h-8 stroke-[3]" />
+      <div className="text-center py-6 space-y-6">
+        <div className="mx-auto flex items-center justify-center w-14 h-14 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-full">
+          <Check className="w-7 h-7 stroke-[3]" />
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100">
-            สั่งซื้อสำเร็จแล้ว! 🎉
+          <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+            สั่งซื้อสำเร็จแล้ว
           </h2>
-          <p className="text-slate-505 dark:text-slate-400 text-xs md:text-sm max-w-sm mx-auto leading-relaxed">
-            ระบบได้รับข้อมูลสลิปและใบสั่งเสื้อยืดของคุณเรียบร้อยแล้ว เจ้าหน้าที่จะดำเนินการตรวจสอบข้อมูลภายใน 1 วันทำการ
+          <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto leading-relaxed">
+            ระบบได้รับข้อมูลสลิปและใบสั่งเสื้อยืดของคุณเรียบร้อยแล้ว เจ้าหน้าที่จะตรวจสอบภายใน 1 วันทำการ
           </p>
         </div>
 
         {/* Digital Receipt Card */}
-        <div className="max-w-md mx-auto bg-slate-50 dark:bg-slate-950 border border-slate-200/50 dark:border-slate-850 rounded-3xl p-6 text-left space-y-4 shadow-sm relative overflow-hidden">
-          {/* Side notches to mock a ticket */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-white dark:bg-slate-900 rounded-r-full -ml-2 border-r border-slate-200/50 dark:border-slate-850"></div>
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-white dark:bg-slate-900 rounded-l-full -mr-2 border-l border-slate-200/50 dark:border-slate-850"></div>
-
+        <div className="max-w-md mx-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-left space-y-4">
           <div className="flex justify-between items-center border-b border-dashed border-slate-200 dark:border-slate-800 pb-3">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">ใบสั่งซื้อ (OrderID)</span>
-            <span className="font-black text-slate-800 dark:text-slate-250 text-sm tracking-wider">{createdOrderId}</span>
+            <span className="text-slate-400 text-xs font-medium">หมายเลขใบสั่งซื้อ</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm tracking-wide">{createdOrderId}</span>
           </div>
 
-          <div className="space-y-2.5 text-xs">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
               <span className="text-slate-500">ผู้รับพัสดุ</span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">{receiptInfo?.name || '-'}</span>
+              <span className="font-medium text-slate-800 dark:text-slate-200">{receiptInfo?.name || '-'}</span>
             </div>
-
             <div className="flex justify-between items-center">
               <span className="text-slate-500">จำนวนสั่งผลิต</span>
-              <span className="font-bold text-slate-800 dark:text-slate-200">{receiptInfo?.shirtCount || 0} ตัว</span>
+              <span className="font-medium text-slate-800 dark:text-slate-200">{receiptInfo?.shirtCount || 0} ตัว</span>
             </div>
           </div>
 
           <div className="flex justify-between items-center border-t border-dashed border-slate-200 dark:border-slate-800 pt-3">
-            <span className="text-sm font-black text-slate-800 dark:text-slate-200">ยอดชำระสุทธิ</span>
-            <span className="text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-650 bg-clip-text text-transparent">
+            <span className="font-semibold text-slate-900 dark:text-white">ยอดชำระสุทธิ</span>
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
               {(receiptInfo?.grandTotal || 0).toLocaleString()} บาท
             </span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <button
             onClick={() => router.push('/history')}
-            className="flex items-center justify-center gap-2 px-6 py-3.5 font-black text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-lg shadow-blue-500/25 transition-all text-sm"
+            className="flex items-center justify-center gap-2 px-6 py-3 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors text-sm"
           >
             <FileText className="w-4 h-4" />
             <span>ดูประวัติและติดตามสถานะ</span>
@@ -168,7 +159,7 @@ export default function OrderPaymentPage() {
 
           <button
             onClick={() => router.push('/')}
-            className="flex items-center justify-center gap-2 px-6 py-3.5 font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 dark:text-slate-350 dark:bg-slate-900 dark:hover:bg-slate-800 active:scale-95 rounded-xl transition-all text-sm"
+            className="flex items-center justify-center gap-2 px-6 py-3 font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl transition-colors text-sm"
           >
             <ShoppingBag className="w-4 h-4" />
             <span>กลับหน้าหลัก</span>
@@ -181,64 +172,54 @@ export default function OrderPaymentPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
-        <span className="inline-block px-2 py-0.5 bg-blue-150/10 text-blue-600 dark:text-blue-400 text-[10px] font-black rounded-md mb-2 border border-blue-500/20">
-          STEP 4 OF 4
-        </span>
-        <h2 className="text-xl md:text-3xl font-black text-slate-850 dark:text-slate-100 tracking-tight">
-          ชำระเงินผ่าน PromptPay 💸
+      <div>
+        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">STEP 4 / 4</span>
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight mt-1">
+          ชำระเงินผ่าน PromptPay
         </h2>
-        <p className="text-xs md:text-sm text-slate-500 mt-1">
-          สแกนคิวอาร์โค้ด PromptPay ด้านล่างเพื่อทำการชำระเงิน จากนั้นส่งภาพหลักฐานเพื่อยืนยันคำสั่งซื้อ
+        <p className="text-sm text-slate-500 mt-1">
+          สแกน QR Code ด้านล่างเพื่อชำระเงิน จากนั้นอัปโหลดสลิปเพื่อยืนยันคำสั่งซื้อ
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        {/* Left: PromptPay QR Code Mockup */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        {/* Left: PromptPay QR Code */}
         <div className="flex flex-col items-center">
-          <div className="w-full max-w-[320px] bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="w-full max-w-[300px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/Payment.jpeg"
-              alt="Scan to Pay"
-              className="w-full h-auto object-contain"
-            />
-            {/* QR Footer showing exact amount */}
-            <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-center">
-              <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">ยอดโอนเงิน</span>
-              <span className="text-3xl font-black text-blue-600 dark:text-blue-400">
+            <img src="/Payment.jpeg" alt="Scan to Pay" className="w-full h-auto object-contain" />
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-center">
+              <span className="text-[10px] text-slate-400 block">ยอดโอนเงิน</span>
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {summary.grandTotal.toLocaleString()}.00
               </span>
-              <span className="text-xs font-black text-slate-500 ml-1">THB</span>
+              <span className="text-xs font-medium text-slate-500 ml-1">THB</span>
             </div>
           </div>
 
-          <div className="mt-4 p-3.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 rounded-2xl text-center max-w-[320px]">
-            <p className="text-[10px] text-amber-700 dark:text-amber-400 font-bold leading-relaxed">
-              💡 แนะนำ: บันทึกหน้าจอรูป QR Code นี้เพื่อเปิดสแกนด้วยแอปธนาคารบนสมาร์ตโฟนของคุณได้ทันที
+          <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl text-center max-w-[300px]">
+            <p className="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+              บันทึกภาพ QR Code ไว้เพื่อเปิดสแกนด้วยแอปธนาคารบนมือถือได้ทันที
             </p>
           </div>
         </div>
 
         {/* Right: Upload slip form */}
-        <div className="space-y-6">
-          <div className="space-y-1.5">
-            <h3 className="text-base font-black text-slate-800 dark:text-slate-200">
-              อัปโหลดสลิปโอนเงิน 🧾
-            </h3>
-            <p className="text-[10px] text-slate-450 dark:text-slate-500 font-bold uppercase tracking-wider">รองรับ PNG, JPG หรือ JPEG (ขนาดสูงสุด 5MB)</p>
+        <div className="space-y-5">
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">อัปโหลดสลิปโอนเงิน</h3>
+            <p className="text-xs text-slate-400">รองรับ PNG, JPG หรือ JPEG (ขนาดสูงสุด 5MB)</p>
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-rose-50 border border-rose-100 dark:bg-rose-950/20 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 rounded-xl text-xs font-semibold">
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 dark:bg-red-950/20 dark:border-red-900/40 text-red-600 dark:text-red-400 rounded-xl text-xs font-medium">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Slip Drag-and-drop or select box */}
           {!slipPreview ? (
-            <div className="relative border-2 border-dashed border-slate-350 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-600 rounded-3xl p-8 flex flex-col items-center justify-center gap-3 bg-slate-50 dark:bg-slate-900/10 cursor-pointer transition-all hover:bg-slate-100/40">
+            <div className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-600 rounded-2xl p-8 flex flex-col items-center justify-center gap-2.5 bg-slate-50/60 dark:bg-slate-900/30 cursor-pointer transition-colors">
               <input
                 type="file"
                 id="slipUpload"
@@ -246,54 +227,47 @@ export default function OrderPaymentPage() {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
               />
-              <div className="p-3 bg-white dark:bg-slate-900 shadow-sm rounded-2xl border border-slate-100 dark:border-slate-800 text-slate-400">
-                <Upload className="w-6 h-6" />
+              <div className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400">
+                <Upload className="w-5 h-5" />
               </div>
-              <div className="text-center space-y-1">
-                <p className="text-xs md:text-sm font-black text-slate-700 dark:text-slate-300">คลิกเพื่อเลือกรูปภาพสลิป</p>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500">หรือลากไฟล์ภาพมาวางที่นี่</p>
+              <div className="text-center space-y-0.5">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">คลิกเพื่อเลือกรูปภาพสลิป</p>
+                <p className="text-xs text-slate-400">หรือลากไฟล์ภาพมาวางที่นี่</p>
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-950 border border-slate-200/50 dark:border-slate-850 rounded-3xl p-4 space-y-4 shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-900 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-blue-500" />
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[180px]">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">
                     {slipFile?.name}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleRemoveFile}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition-all"
+                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors shrink-0"
                   title="ลบไฟล์"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Preview Image */}
-              <div className="relative aspect-[3/4] max-h-[220px] mx-auto rounded-xl overflow-hidden border border-slate-100 dark:border-slate-900 bg-slate-50 dark:bg-slate-900/40 flex items-center justify-center">
+              <div className="relative aspect-[3/4] max-h-[200px] mx-auto rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={slipPreview}
-                  alt="Payment Slip Preview"
-                  className="h-full object-contain"
-                />
+                <img src={slipPreview} alt="Payment Slip Preview" className="h-full object-contain" />
               </div>
             </div>
           )}
 
           {/* Form Actions */}
-          <div className="flex justify-between pt-6 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="flex justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
-              onClick={() => {
-                router.push('/order/review');
-              }}
+              onClick={() => router.push('/order/review')}
               disabled={isSubmitting}
-              className="flex items-center gap-1.5 px-5 py-3 font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 rounded-xl transition-all text-sm disabled:opacity-50"
+              className="flex items-center gap-1.5 px-4 py-2.5 font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 rounded-xl transition-colors text-sm disabled:opacity-50"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>ย้อนกลับ</span>
@@ -302,7 +276,7 @@ export default function OrderPaymentPage() {
             <button
               onClick={handleSubmitPayment}
               disabled={isSubmitting}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 font-black text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 disabled:active:scale-100 rounded-xl shadow-lg shadow-emerald-500/20 transition-all text-sm disabled:opacity-75 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-5 py-3 font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors text-sm disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>

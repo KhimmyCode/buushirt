@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className="font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 antialiased min-h-screen flex flex-col">
         <OrderProvider>
           <Navbar />
-          <main className="flex-grow flex flex-col justify-start pb-24 md:pb-0">
+          <main className="flex-grow flex flex-col justify-start">
             {children}
           </main>
         </OrderProvider>

@@ -34,20 +34,20 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
     return (
       <div className="flex-grow flex items-center justify-center min-h-[50vh]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-medium animate-pulse">กำลังโหลด...</p>
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-500 text-sm">กำลังโหลด...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto w-full px-4 py-8">
+    <div className="max-w-3xl mx-auto w-full px-4 py-8 md:py-10">
       {/* Checkout step progress */}
       <StepProgress currentStep={currentStep} />
 
       {/* Main step container */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/50 rounded-3xl shadow-xl overflow-hidden p-6 md:p-10 transition-all duration-300">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 md:p-8">
         {children}
       </div>
     </div>

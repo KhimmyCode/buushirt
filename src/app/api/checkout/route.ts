@@ -161,8 +161,8 @@ export async function POST(request: Request) {
       if (item.printName && (typeof item.printName !== 'string' || item.printName.length > 30)) {
         return NextResponse.json({ error: 'ชื่อสกรีนยาวเกินไป (ไม่เกิน 30 ตัวอักษร)' }, { status: 400 });
       }
-      if (item.backNumber && (typeof item.backNumber !== 'string' || item.backNumber.length > 5)) {
-        return NextResponse.json({ error: 'เบอร์สกรีนยาวเกินไป (ไม่เกิน 5 ตัวอักษร)' }, { status: 400 });
+      if (item.backNumber && (typeof item.backNumber !== 'string' || !/^[0-9]{1,2}$/.test(item.backNumber))) {
+        return NextResponse.json({ error: 'เบอร์หลังเสื้อต้องเป็นตัวเลข ไม่เกิน 2 หลัก' }, { status: 400 });
       }
       if (item.customText && (typeof item.customText !== 'string' || item.customText.length > 100)) {
         return NextResponse.json({ error: 'หมายเหตุยาวเกินไป (ไม่เกิน 100 ตัวอักษร)' }, { status: 400 });

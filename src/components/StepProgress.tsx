@@ -25,8 +25,8 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentStep }) => {
   const currentIndex = getStepIndex(currentStep);
 
   return (
-    <div className="w-full py-4 px-3 md:py-6 md:px-8 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border border-slate-200/30 dark:border-slate-850 shadow-lg rounded-2xl md:rounded-3xl mb-6 md:mb-8 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between">
+    <div className="mb-6 md:mb-8">
+      <div className="flex items-center">
         {STEPS.map((step, idx) => {
           const Icon = step.icon;
           const isCompleted = idx < currentIndex;
@@ -34,49 +34,35 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentStep }) => {
 
           return (
             <React.Fragment key={step.id}>
-              {/* Step item */}
-              <div className="flex flex-col items-center flex-1 relative z-10">
+              <div className="flex flex-col items-center gap-1.5 shrink-0">
                 <div
-                  className={`flex items-center justify-center w-8 h-8 md:w-12 md:h-12 rounded-full border-2 transition-all duration-300 ${
+                  className={`flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full border-2 transition-colors ${
                     isCompleted
-                      ? 'bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                      ? 'bg-blue-600 border-blue-600 text-white'
                       : isActive
-                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 border-blue-600 text-white shadow-lg shadow-blue-500/25 ring-4 ring-blue-50 dark:ring-blue-950'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500'
+                      ? 'bg-white dark:bg-slate-950 border-blue-600 text-blue-600'
+                      : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-600'
                   }`}
                 >
                   {isCompleted ? (
-                    <Check className="w-4 h-4 md:w-6 h-6 stroke-[3]" />
+                    <Check className="w-4 h-4 stroke-[3]" />
                   ) : (
-                    <Icon className="w-3.5 h-3.5 md:w-5 h-5" />
+                    <Icon className="w-4 h-4" />
                   )}
                 </div>
                 <span
-                  className={`mt-2 text-xs md:text-sm font-bold transition-colors duration-300 ${
-                    isActive
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : isCompleted
-                      ? 'text-slate-600 dark:text-slate-400'
-                      : 'text-slate-400 dark:text-slate-500'
-                  } text-center hidden sm:block`}
-                >
-                  {step.label}
-                </span>
-                {/* Mobile label - only show active to save space */}
-                <span
-                  className={`mt-1.5 text-[9px] font-black text-blue-600 dark:text-blue-400 text-center sm:hidden ${
-                    isActive ? 'block' : 'hidden'
+                  className={`text-[10px] md:text-xs font-medium text-center hidden sm:block ${
+                    isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
                   }`}
                 >
                   {step.label}
                 </span>
               </div>
 
-              {/* Connector line */}
               {idx < STEPS.length - 1 && (
-                <div className="flex-1 h-[2px] mx-1 md:mx-4 bg-slate-200 dark:bg-slate-800 relative">
+                <div className="flex-1 h-[2px] mx-1.5 md:mx-3 bg-slate-150 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-500 ease-out"
+                    className="h-full bg-blue-600 transition-all duration-300"
                     style={{ width: isCompleted ? '100%' : '0%' }}
                   />
                 </div>
@@ -85,6 +71,10 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentStep }) => {
           );
         })}
       </div>
+      {/* Mobile active label */}
+      <p className="mt-2 text-xs font-semibold text-blue-600 dark:text-blue-400 text-center sm:hidden">
+        {STEPS[currentIndex]?.label}
+      </p>
     </div>
   );
 };
