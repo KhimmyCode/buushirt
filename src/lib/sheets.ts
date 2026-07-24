@@ -31,6 +31,17 @@ export interface OrderItemRow {
 
 const LOCAL_DB_PATH = path.join(process.cwd(), 'src/data/localDb.json');
 
+/**
+ * Force a value to be stored as plain text in Google Sheets.
+ * With valueInputOption 'USER_ENTERED', Sheets auto-detects numeric-looking
+ * strings (e.g. "0891234567", "01") and strips the leading zero. Prefixing
+ * with a leading apostrophe tells Sheets to keep it as text; the apostrophe
+ * itself is not stored and won't show up when the value is read back.
+ */
+function toSheetText(value: string): string {
+  return value ? `'${value}` : value;
+}
+
 // Helper to ensure local database exists
 function ensureLocalDb() {
   const dir = path.dirname(LOCAL_DB_PATH);
@@ -90,18 +101,18 @@ export async function saveOrder(order: OrderRow, items: OrderItemRow[]): Promise
         requestBody: {
           values: [
             [
-              order.OrderID,
-              order.Timestamp,
+              toSheetText(order.OrderID),
+              toSheetText(order.Timestamp),
               order.Email,
               order.CustomerName,
               order.ShippingAddress,
-              order.Phone,
+              toSheetText(order.Phone),
               order.TotalItems,
               order.TotalPrice,
               order.SlipUrl,
               order.Status,
-              order.TrackingNumber,
-              order.PromoCode || '',
+              toSheetText(order.TrackingNumber),
+              toSheetText(order.PromoCode || ''),
             ],
           ],
         },
@@ -110,13 +121,13 @@ export async function saveOrder(order: OrderRow, items: OrderItemRow[]): Promise
       // 2. Append to OrderItems
       // Schema: OrderID | ItemIndex | DesignName | Size | PrintName | BackNumber | CustomText | ItemPrice | SlipUrl
       const itemValues = items.map((item) => [
-        item.OrderID,
+        toSheetText(item.OrderID),
         item.ItemIndex,
         item.DesignName,
         item.Size,
-        item.PrintName,
-        item.BackNumber,
-        item.CustomText,
+        toSheetText(item.PrintName),
+        toSheetText(item.BackNumber),
+        toSheetText(item.CustomText),
         item.ItemPrice,
         item.SlipUrl || '',
       ]);
@@ -352,7 +363,7 @@ export async function updateOrderStatus(
         range: `Orders!J${targetRowIndex}:K${targetRowIndex}`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
-          values: [[status, trackingNumber]],
+          values: [[status, toSheetText(trackingNumber)]],
         },
       });
       return;
