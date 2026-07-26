@@ -180,7 +180,7 @@ export default function OrderItemsPage() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                         <Type className="w-3.5 h-3.5" />
-                        ชื่อสกรีนหน้า/หลัง
+                        ชื่อสกรีนหลัง
                       </label>
                       <input
                         type="text"
