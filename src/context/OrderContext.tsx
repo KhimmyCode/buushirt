@@ -204,7 +204,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Validate quantity boundary
       if (updated.shirtCount < 1) updated.shirtCount = 1;
-      if (updated.shirtCount > 20) updated.shirtCount = 20;
+      if (updated.shirtCount > 30) updated.shirtCount = 30;
 
       // Dynamically resize shirtItems array to match updated shirtCount
       setShirtItems((prevItems) => {

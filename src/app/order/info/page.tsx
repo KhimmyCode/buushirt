@@ -48,8 +48,8 @@ export default function OrderInfoPage() {
     }
 
     const count = Number(shirtCount);
-    if (isNaN(count) || count < 1 || count > 20) {
-      newErrors.shirtCount = 'จำนวนเสื้อที่สั่งได้ต้องอยู่ระหว่าง 1 ถึง 20 ตัว';
+    if (isNaN(count) || count < 1 || count > 30) {
+      newErrors.shirtCount = 'จำนวนเสื้อที่สั่งได้ต้องอยู่ระหว่าง 1 ถึง 30 ตัว';
     }
 
     setErrors(newErrors);
@@ -163,7 +163,7 @@ export default function OrderInfoPage() {
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <Hash className="w-4 h-4 text-slate-400" />
-              จำนวนเสื้อ (1-20 ตัว)
+              จำนวนเสื้อ (1-30 ตัว)
             </label>
             <div className="flex items-center gap-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-1.5 w-fit">
               <button
@@ -179,8 +179,8 @@ export default function OrderInfoPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setShirtCount(Math.min(20, shirtCount + 1))}
-                disabled={shirtCount >= 20}
+                onClick={() => setShirtCount(Math.min(30, shirtCount + 1))}
+                disabled={shirtCount >= 30}
                 className="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 active:scale-95 transition-all disabled:opacity-40"
               >
                 +
@@ -197,6 +197,7 @@ export default function OrderInfoPage() {
             { value: 5, label: '5 ตัว · 339 บ.' },
             { value: 10, label: '10 ตัว · 329 บ.' },
             { value: 20, label: '20 ตัว · 319 บ.' },
+            { value: 30, label: '30 ตัว · 319 บ.' },
           ].map((preset) => (
             <button
               key={preset.value}

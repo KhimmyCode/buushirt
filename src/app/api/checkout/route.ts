@@ -145,8 +145,8 @@ export async function POST(request: Request) {
 
     // Validate shirt count limit
     const qty = shirtItems.length;
-    if (qty !== shirtCount || qty < 1 || qty > 20) {
-      return NextResponse.json({ error: 'จำนวนเสื้อต้องอยู่ระหว่าง 1 ถึง 20 ตัว' }, { status: 400 });
+    if (qty !== shirtCount || qty < 1 || qty > 30) {
+      return NextResponse.json({ error: 'จำนวนเสื้อต้องอยู่ระหว่าง 1 ถึง 30 ตัว' }, { status: 400 });
     }
 
     // Validate shirt customizations for script injection / size limits
