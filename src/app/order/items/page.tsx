@@ -184,7 +184,7 @@ export default function OrderItemsPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="เช่น JOHN หรือ สมชาย"
+                        placeholder="เช่น TOON"
                         value={item.printName}
                         onChange={(e) => handleTextChange(idx, 'printName', e.target.value)}
                         className={textInputClass}
